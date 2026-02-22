@@ -1,4 +1,4 @@
-"""Local LLM structured extraction service using Ollama."""
+"""Groq LLM structured extraction service."""
 
 import json
 import logging
@@ -19,7 +19,7 @@ Extract the following information accurately:
 - labor_hours: Hours worked (numeric)
 - follow_up_date: If a follow-up is mentioned, extract the date (convert relative dates like "6 months" to an ISO date) or null
 - follow_up_reason: Why follow-up is needed or null
-- invoice_required: True if the job was completed and should be billed (default true)
+- invoice_required: True if the job was completed and should be billed (default true). Set to false if the user explicitly says not to bill.
 - confidence_score: Confidence in extraction accuracy (0.0 to 1.0)
 
 For materials used, return a list where each item has:
@@ -30,6 +30,7 @@ For materials used, return a list where each item has:
 Rules:
 - Parse relative dates: "6 months" = 6 months from today, "next week" = 7 days from today
 - Always attempt to infer job_type from context even if not explicitly stated
+- If someone says "don't bill" or "no charge", set invoice_required to false
 - Respond ONLY with valid JSON matching the exact schema provided. Do not include markdown formatting or extra text.
 """
 
@@ -62,38 +63,30 @@ EXTRACTION_SCHEMA = {
 
 async def extract_job_data(transcript: str) -> JobExtraction:
     """
-    Extract structured job data from a transcript using local Ollama instance.
+    Extract structured job data from a transcript using Groq LLM API.
     """
     logger.info(f"Extracting structured data from transcript: {transcript[:80]}...")
 
     try:
-        # Point to local Ollama API
         client = OpenAI(
-            base_url="http://localhost:11434/v1",
-            api_key="ollama" # required but ignored
+            base_url="https://api.groq.com/openai/v1",
+            api_key=settings.GROQ_API_KEY,
         )
 
         response = client.chat.completions.create(
-            model=settings.OLLAMA_MODEL,
+            model=settings.GROQ_LLM_MODEL,
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": f"Extract job data from this transcript and return ONLY JSON:\n\n\"{transcript}\""}
             ],
             response_format={"type": "json_object"},
             temperature=0.0,
-            max_tokens=200,
-            extra_body={
-                "options": {
-                    "num_ctx": 512,        # Small context window drastically speeds up prompt evaluation
-                    "num_predict": 200     # Limit generation to prevent rambling
-                },
-                "keep_alive": -1           # Keep model in memory indefinitely so the next request is instant
-            }
+            max_tokens=500,
         )
 
         content = response.choices[0].message.content
         
-        # Strip any potential markdown wrappers if the model ignores the instructions
+        # Strip any potential markdown wrappers
         content = re.sub(r'```json\s*', '', content)
         content = re.sub(r'```\s*', '', content)
         
