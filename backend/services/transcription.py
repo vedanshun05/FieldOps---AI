@@ -85,6 +85,26 @@ async def transcribe_audio(audio_file) -> str:
                             transcript = text_part
             
             transcript = transcript.strip('"\' ')
+
+            # Detect Whisper hallucinations (silence → garbage output)
+            HALLUCINATIONS = {
+                "thank you.", "thanks for watching.", "thanks for listening.",
+                "bye.", "goodbye.", "see you.", "you", "thank you",
+                "thanks.", "the end.", "subtitles by",
+            }
+            if transcript.lower().strip(". ") in {h.strip(". ") for h in HALLUCINATIONS}:
+                logger.warning(f"Detected hallucination: '{transcript}' — audio may be silent or too quiet")
+                raise Exception(
+                    f"Could not transcribe audio — got hallucination '{transcript}'. "
+                    "Please speak louder, closer to the mic, and record for at least 3 seconds."
+                )
+
+            if len(transcript) < 5:
+                logger.warning(f"Transcript too short: '{transcript}'")
+                raise Exception(
+                    "Transcript too short. Please speak clearly and record for at least 3 seconds."
+                )
+
             logger.info(f"Cleaned Transcript: {transcript}")
             return transcript
 
