@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Wrench, DollarSign, PackageOpen, CalendarPlus, Settings2 } from "lucide-react";
 import VoiceRecorder from "@/components/VoiceRecorder";
 import StatsCard from "@/components/StatsCard";
-import AgentTrace from "@/components/AgentTrace";
+import AgentTrace, { LiveAgentTrace } from "@/components/AgentTrace";
 import AlertBanner from "@/components/AlertBanner";
 import { getDashboardSummary, getAlerts } from "@/lib/api";
 
@@ -13,6 +13,8 @@ export default function DashboardPage() {
   const [lastResult, setLastResult] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isRecording, setIsRecording] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const fetchData = useCallback(async () => {
     try {
@@ -48,6 +50,8 @@ export default function DashboardPage() {
         <VoiceRecorder
           onResult={handleVoiceResult}
           onError={(msg) => setError(msg)}
+          onRecordingStateChange={setIsRecording}
+          onProcessingStateChange={setIsProcessing}
         />
         {error && (
           <div className="mt-6 p-4 rounded-2xl border border-red-500/20 bg-red-500/5 text-red-400 text-sm max-w-md text-center">
@@ -56,8 +60,12 @@ export default function DashboardPage() {
         )}
       </div>
 
-      {/* Agent Trace (shows after processing) */}
-      {lastResult && <AgentTrace result={lastResult} />}
+      {/* Agent Trace (shows while recording/processing OR after processing) */}
+      {(isRecording || isProcessing) ? (
+        <LiveAgentTrace isRecording={isRecording} isProcessing={isProcessing} />
+      ) : lastResult ? (
+        <AgentTrace result={lastResult} />
+      ) : null}
 
       {/* Alerts */}
       <AlertBanner alerts={alerts} />

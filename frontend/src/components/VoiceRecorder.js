@@ -1,7 +1,7 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 
-export default function VoiceRecorder({ onResult, onError }) {
+export default function VoiceRecorder({ onResult, onError, onRecordingStateChange, onProcessingStateChange }) {
     const [recording, setRecording] = useState(false);
     const [processing, setProcessing] = useState(false);
     const [duration, setDuration] = useState(0);
@@ -32,6 +32,7 @@ export default function VoiceRecorder({ onResult, onError }) {
 
             mediaRecorder.start();
             setRecording(true);
+            onRecordingStateChange?.(true);
             setDuration(0);
             timerRef.current = setInterval(() => setDuration((d) => d + 1), 1000);
         } catch (err) {
@@ -43,12 +44,14 @@ export default function VoiceRecorder({ onResult, onError }) {
         if (mediaRecorderRef.current && recording) {
             mediaRecorderRef.current.stop();
             setRecording(false);
+            onRecordingStateChange?.(false);
             clearInterval(timerRef.current);
         }
     };
 
     const submitAudio = async (blob) => {
         setProcessing(true);
+        onProcessingStateChange?.(true);
         try {
             const { submitVoice } = await import("@/lib/api");
             const result = await submitVoice(blob);
@@ -57,6 +60,7 @@ export default function VoiceRecorder({ onResult, onError }) {
             onError?.(err.message || "Failed to process voice note");
         } finally {
             setProcessing(false);
+            onProcessingStateChange?.(false);
             setDuration(0);
         }
     };
