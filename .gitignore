@@ -1,0 +1,24 @@
+# Python virtual environments
+backend/venv/
+backend/.venv/
+
+# Node modules
+frontend/node_modules/
+
+# Python cache / artifacts
+__pycache__/
+*.pyc
+
+# Env files and local config
+.env
+backend/.env
+backend/.env.*
+frontend/.env
+frontend/.env.*
+
+# OS / editor noise
+.DS_Store
+*.log
+.vscode/
+.idea/
+
