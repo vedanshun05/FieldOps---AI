@@ -1,97 +1,234 @@
-## SpeedRun / FieldOps AI
+🚀 FieldOps AI
+Voice-Driven Autonomous ERP for Field Service SMBs
+FieldOps AI is a Zero-UI, Voice-First ERP system that converts unstructured voice notes into real-time business operations. It empowers field service professionals to manage their entire workflow—inventory, invoicing, CRM, and analytics—without filling a single form.
 
-This repo is split into a **FastAPI backend** (`backend/`) and a **Next.js frontend** (`frontend/`).
+🧠 Problem
+Millions of field workers (plumbers, electricians, technicians) operate in fast-paced environments where:
+❌ Data entry is ignored or delayed
 
-- Backend: FastAPI, SQLAlchemy, OpenAI integration.
-- Frontend: Next.js 16, React 19, Tailwind CSS 4.
+❌ Inventory tracking is inconsistent
 
-Use this README together with `backend/README.md` for backend-specific details.
+❌ Invoices are generated late
 
----
+❌ Follow-ups are missed
 
-## Local development
+❌ Traditional ERP systems are too complex
 
-### Backend (FastAPI)
+💡 Reality: Field workers naturally communicate via voice, not forms.
 
-From the `backend` directory:
+🎯 Solution
+FieldOps AI turns a simple voice note into automated business workflows.
+🎙 Example Input
+“Finished the Sharma job. Used 3 copper pipes, worked 2 hours. Heater is old — schedule follow-up in 6 months.”
+⚡ AI Automatically:
+📦 Updates inventory
 
-1. (Recommended) Create a virtualenv and activate it.
-2. Install dependencies:
+💰 Calculates labor cost
 
-   ```bash
+🧾 Generates invoice
+
+📅 Schedules follow-up
+
+📝 Logs job summary
+
+📊 Updates revenue dashboard
+
+➡️ All in real-time. No manual input required.
+
+🧠 AI Capabilities
+
+1. 🎙 Speech-to-Text
+   Converts noisy field voice notes into text
+
+Powered by Whisper / Faster-Whisper
+
+2. 🧩 Structured Data Extraction
+   Extracts:
+   Client name
+
+Materials used
+
+Quantity
+
+Labor time
+
+Follow-up intent
+
+3. 🎯 Intent Classification
+   Detects:
+   Inventory updates
+
+Billing actions
+
+CRM tasks
+
+4. 🤖 Agentic Tool Calling
+   Dynamically executes backend functions:
+   update_inventory()
+   generate_invoice()
+   create_followup()
+
+5. 🗃 Stateful System Updates
+   Automatically updates:
+   Inventory database
+
+Invoice records
+
+CRM tasks
+
+Revenue analytics
+
+🛠 Tech Stack
+🎙 AI Layer
+Speech-to-Text: Whisper / Faster-Whisper
+
+LLM: GPT-4o-mini / Mixtral / LLaMA 3 (via Groq)
+
+Agent Framework: OpenAI Function Calling / LangChain
+
+⚙ Backend
+FastAPI
+
+Pydantic
+
+SQLite / PostgreSQL (Supabase)
+
+💻 Frontend
+React / Next.js
+
+Tailwind CSS
+
+☁ Deployment
+Backend: Render
+
+Frontend: Vercel
+
+Database: Supabase
+
+📊 Features
+🎙 Voice-first interaction (Zero UI)
+
+📦 Real-time inventory tracking
+
+🧾 Auto invoice generation
+
+📅 CRM & follow-up automation
+
+📊 Revenue dashboard
+
+🔔 Smart alerts (low stock, follow-ups)
+
+📈 Business insights & analytics
+
+🎥 Demo Flow
+Record or upload a voice note
+
+AI processes input
+
+Watch live updates:
+
+Inventory changes
+
+Invoice creation
+
+CRM task added
+
+Dashboard updated
+
+👥 Target Users
+Primary
+Plumbers
+
+Electricians
+
+Repair technicians
+
+Independent contractors
+
+Secondary
+Small service teams (2–20 members)
+
+Future Expansion
+Logistics teams
+
+Field sales agents
+
+Construction crews
+
+🔁 Retention Strategy
+📊 Weekly revenue summaries
+
+📦 Low stock alerts
+
+📅 Follow-up reminders
+
+📈 Monthly performance reports
+
+🤖 AI business insights
+
+💰 Business Model
+Freemium
+Basic voice logging
+
+Pro
+Auto invoicing
+
+CRM automation
+
+Premium
+Advanced analytics
+
+Tax-ready reports
+
+Future Add-ons
+WhatsApp voice integration
+
+Regional language support
+
+Predictive forecasting
+
+🌍 Impact
+⏱ Saves 1–2 hours per day
+
+💰 Reduces revenue leakage
+
+📈 Improves follow-up conversions
+
+🧾 Brings structure to informal work
+
+🌐 Digitizes millions of small businesses
+
+🚀 Getting Started
+
+1. Clone the repo
+   git clone https://github.com/your-username/fieldops-ai.git
+   cd fieldops-ai
+
+2. Backend Setup
+   cd backend
    pip install -r requirements.txt
-   ```
+   uvicorn main:app --reload
 
-3. Ensure `backend/.env` exists with your config (the backend loads from `.env`). See `backend/README.md` for the variable names to set.
-4. Start the dev server:
-
-   ```bash
-   uvicorn main:app --reload --host 0.0.0.0 --port 8000
-   ```
-
-See `backend/README.md` for more detail.
-
-### Frontend (Next.js)
-
-From the `frontend` directory:
-
-1. Install dependencies:
-
-   ```bash
+3. Frontend Setup
+   cd frontend
    npm install
-   ```
-
-2. Create `frontend/.env.local` with your backend URL:
-
-   ```bash
-   NEXT_PUBLIC_API_URL=http://localhost:8000
-   ```
-
-3. Start the dev server:
-
-   ```bash
    npm run dev
-   ```
 
-Then open `http://localhost:3000` in your browser.
+4. Configure Environment Variables
+   Create a .env file:
+   OPENAI_API_KEY=your_key
+   DATABASE_URL=your_db_url
 
----
+📌 Future Roadmap
+🌐 Multi-language voice support
 
-## Deployment overview
+📱 WhatsApp integration
 
-### Backend on Render
+📊 Predictive analytics
 
-This repo includes a `render.yaml` that defines a Python **Web Service** for the backend and a PostgreSQL database:
+🤖 Autonomous decision-making agents
 
-- Build command: `pip install -r requirements.txt`
-- Start command: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-- Root directory: `backend`
+🧠 Personalized business insights
 
-High-level steps:
-
-1. Push this repo to GitHub/GitLab.
-2. In Render, **New + Blueprint**, point to the repo, and Render will read `render.yaml`.
-3. In the Render dashboard, set environment variables for the backend service:
-   - `OPENAI_API_KEY`
-   - `DATABASE_URL` (link it to the `fieldops-db` database or another managed DB)
-   - `FRONTEND_URL` (set later to your Vercel URL)
-   - Optional overrides: `LABOR_RATE_PER_HOUR`, `LOW_STOCK_THRESHOLD`, `OLLAMA_MODEL`
-4. Deploy. The backend will be available at a URL like `https://fieldops-backend.onrender.com`.
-
-### Frontend on Vercel
-
-Vercel will host the Next.js app in `frontend/`.
-
-1. Push the repo to GitHub/GitLab/Bitbucket.
-2. In Vercel, click **New Project** → **Import** your repo.
-3. When prompted for **Root Directory**, choose `frontend`.
-4. Use the default Next.js settings:
-   - Install command: `npm install`
-   - Build command: `npm run build`
-   - Output: default (`.next`)
-5. In Vercel Project Settings → **Environment Variables**, set:
-   - `NEXT_PUBLIC_API_URL` = your Render backend URL, e.g. `https://fieldops-backend.onrender.com`
-6. Trigger a deploy. The frontend’s URL will look like `https://your-project.vercel.app`.
-
-Once deployed, update your backend `FRONTEND_URL` env var (on Render) to the Vercel URL so CORS can be restricted accordingly.
-
+🏁 Final Pitch
+FieldOps AI transforms messy voice notes into automated business operations — turning speech into structured revenue.
